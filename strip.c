@@ -4,56 +4,106 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define WIDTH  640
-#define HEIGHT 480
-#define LENGTH 640
-#define COLORS   3
-#define LINE_SIZE  WIDTH*COLORS
-#define FRAME_SIZE LINE_SIZE*HEIGHT
-#define STRIP_WIDTH 15
+#define MAX_WIDTH  4096
+#define MAX_HEIGHT 4096
+#define COLORS        3
+
+#define err(txt) fprintf(stderr,(txt"\n"))
+
+int32_t  width    = 0;
+int32_t  height   = 0;
+int32_t  duration = 0;
 
 FILE* fi;
 FILE* fo;
 
-uint32_t buffer_length = LENGTH;
-uint8_t  buffer[FRAME_SIZE];
-uint8_t  out_buffer[FRAME_SIZE];
-uint8_t* current_buffer;
+uint8_t* buffer = NULL;
+uint8_t* frame  = NULL;
 
-uint32_t current_pos = STRIP_WIDTH;
+uint32_t line_size;
+uint32_t frame_size;
+uint32_t buffer_size;
 
-int main(int argc, char* argv[]) {
+void usage() {
+    err("Usage:");
+    err("<raw rgb frames> | strip <width> <height> <duration>| <raw rgb frames>");
+    err("ffpmeg ... | strip ... | ffplay ...");
+    err("Detailed examples can be found at bash scripts");
+}
+
+int init(int argc, char** argv) {
+
+    if(argc != 4) {
+        usage();
+        return 0;
+    }
+    
+    width    = atoi(argv[1]);
+    height   = atoi(argv[2]);
+    duration = atoi(argv[3]);
+    
+    fprintf(stderr, "Stream: %dx%dpx %d frames\n", width, height, duration);
+    if (width <=0 || width >MAX_WIDTH || 
+        height<=0 || height>MAX_HEIGHT) {       
+        err("Wrong width or height");
+        return 0;
+    }
 
     fi = fdopen(dup(fileno(stdin )), "rb");
     fo = fdopen(dup(fileno(stdout)), "wb"); 
 
-    while(1) {
-        current_buffer = buffer;
+    if(fi == NULL || fo == NULL) {
+        err("Can not open sdtin or stdout");
+        return 0;
+    }
 
-        if(!fread(current_buffer, 1, FRAME_SIZE, fi)) break;
-        for(uint32_t y=0; y<HEIGHT; y++) {
-            for(int32_t x=-STRIP_WIDTH; x<=STRIP_WIDTH; x++) {
-                uint32_t f = y*LINE_SIZE + LINE_SIZE/2 + (x + ceil(sin(current_pos/100.0)*300))*COLORS;
-                uint32_t t = y*LINE_SIZE + (current_pos+x)*COLORS;
-                
-                // out_buffer[t+0] = (out_buffer[t+0]+current_buffer[f+0])/2;
-                // out_buffer[t+1] = (out_buffer[t+1]+current_buffer[f+1])/2;
-                // out_buffer[t+2] = (out_buffer[t+2]+current_buffer[f+2])/2;
-                
-                out_buffer[t+0] = current_buffer[f+0];
-                out_buffer[t+1] = current_buffer[f+1];
-                out_buffer[t+2] = current_buffer[f+2];
+    line_size   = width      * COLORS;
+    frame_size  = line_size  * height;
+    buffer_size = frame_size * duration;
+    
+    buffer = calloc(buffer_size, 1);
+    
+    return 1;
+}
+
+void run() {
+    uint32_t bytes;
+    
+    bytes = fread(buffer, 1, buffer_size, fi);
+    fprintf(stderr, "%dG\n", bytes>>30);
+    if(bytes == 0) return;
+
+    uint32_t w2 = width>>1;
+    uint8_t* out = calloc(duration * height * COLORS, 1);
+    for(uint32_t t=0; t<1000; t++) {
+        for(uint32_t y=0; y<height; y++) {
+            for(uint32_t x=0; x<duration; x++) {
+                uint32_t off = w2+sin(t/250.0)*w2;
+                uint32_t src = off*COLORS + x*frame_size + y*line_size;
+                uint32_t trg = x*COLORS                + y*duration*COLORS;
+                out[trg+0] = buffer[src+0];
+                out[trg+1] = buffer[src+1];
+                out[trg+2] = buffer[src+2];
             }
         }
-        fwrite(out_buffer, 1, FRAME_SIZE, fo);
+        bytes = fwrite(out, 1, duration*height*COLORS, fo);
+   }
+   free(out);
+}
 
-        current_pos = current_pos+1;
-        if (current_pos > WIDTH) current_pos = STRIP_WIDTH;
-        
-    }
+void cleanup() {
+    fprintf(stderr, "cleanup\n");
+
+    if(buffer!=NULL) free(buffer);
     
-    fclose(fi);
-    fclose(fo);
+    if(fi!=NULL) fclose(fi);
+    if(fo!=NULL) fclose(fo);
+}
+
+int main(int argc, char** argv) {
+
+    if(init(argc, argv)) run();
+    cleanup();
 
     return 0;
 }
