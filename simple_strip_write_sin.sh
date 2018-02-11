@@ -18,16 +18,17 @@ H=${streams_stream_0_height}
 D=320
 
 echo "$video" ">>" $name.png $W $H $D >&2
-PERIOD="1000.0"
-RADIUS="iw/4.0"
+PERIOD="200.0"
+RADIUS="iw/2.0"
 X="iw/2.0+sin(n/$PERIOD)*$RADIUS"
-X="iw/2.0"
+# X="iw/2.0"
 HH=$((H/2))
 CROP="crop=2:$H:$X:0,scale=1:$HH,transpose=1"
 ffmpeg                   \
     -hide_banner         \
     -loglevel 0          \
     -i "$video"          \
+    -vf deshake          \
     -vf "$CROP"          \
     -pix_fmt rgb24       \
     -f rawvideo          \
