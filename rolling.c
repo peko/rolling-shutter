@@ -76,10 +76,10 @@ void run() {
 
     int32_t d = 0;
     while(fread(&buffer[d*frame_size], 1, frame_size, fi)) {        
-        for(uint32_t y=0; y<height; y++) {
-            for(uint32_t x=0; x<width; x++) {
+        for(int32_t y=0; y<height; y++) {
+            for(int32_t x=0; x<width; x++) {
                 int32_t trg = x*COLORS + y*line_size;
-                int32_t dur = (d + y) % duration;   
+                int32_t dur = (d - y/4) % duration;   
                 int32_t src = x*COLORS + y*line_size + dur * frame_size;
                 src %= buffer_size;
                 trg %= frame_size;

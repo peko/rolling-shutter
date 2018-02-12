@@ -16,12 +16,17 @@ Strip floating around center
 
 ## Animated strip
 
-Swaping T an X axis
+Swaping T an X axis, strip sliding from 0 to width
+
+https://www.youtube.com/watch?v=ChFV6WtzvU4&list=PLAuHgCDj0SBs6KwyBndM4SjKHyuDsXMU3&index=4)
 
 [![](https://img.youtube.com/vi/Bf1Q_JJ0C4w/0.jpg)](https://www.youtube.com/watch?v=ChFV6WtzvU4&list=PLAuHgCDj0SBs6KwyBndM4SjKHyuDsXMU3&index=4)
 
 # Rolling shutter
 
 https://en.wikipedia.org/wiki/Rolling_shutter
+
+[![](https://img.youtube.com/vi/c3CF-kaLe_o/1.jpg)](https://www.youtube.com/watch?v=c3CF-kaLe_o)
+
 
 
