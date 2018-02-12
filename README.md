@@ -27,8 +27,11 @@ https://www.youtube.com/watch?v=ChFV6WtzvU4&list=PLAuHgCDj0SBs6KwyBndM4SjKHyuDsX
 https://en.wikipedia.org/wiki/Rolling_shutter
 
 [![](https://img.youtube.com/vi/c3CF-kaLe_o/1.jpg)](https://www.youtube.com/watch?v=c3CF-kaLe_o)
-
 [![](https://img.youtube.com/vi/YEHwRu7DFR4/1.jpg)](https://www.youtube.com/watch?v=YEHwRu7DFR4)
+[![](https://img.youtube.com/vi/EupMUpENvEs/1.jpg)](https://www.youtube.com/watch?v=EupMUpENvEs)
+
+
+
 
 
 

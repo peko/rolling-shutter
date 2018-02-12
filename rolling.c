@@ -13,7 +13,7 @@
 
 int32_t  width    =  0;
 int32_t  height   =  0;
-int64_t duration =  0;; 
+int64_t duration  =  0;; 
 
 FILE* fi;
 FILE* fo;
