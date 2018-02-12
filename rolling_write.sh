@@ -20,6 +20,7 @@ ffmpeg                   \
     -vf scale=$W:$H      \
     -pix_fmt rgb24       \
     -f rawvideo          \
+    -t 150               \
     - |                  \
 ./rolling $W $H |        \
 ffmpeg                   \

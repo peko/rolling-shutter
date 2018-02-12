@@ -71,16 +71,40 @@ int init(int argc, char** argv) {
 void run() {
 
     uint32_t bytes;
+
     uint8_t* buffer = calloc(buffer_size, 1);
     uint8_t* out    = calloc(frame_size , 1);
+    int32_t* lense  = calloc(frame_size , sizeof(int32_t));
+    
+    int64_t dur = 0;
 
-    int64_t d = 0;
+    for(int32_t y=0; y<height; y++) {
+        char type = 1; 
+        for(int32_t x=0; x<width; x++) {
+            float yy = y-height/2.0;
+            float xx = x-width /2.0;
+            if(type == 1) {
+                float dd = duration*(pow(yy/height,2.0)+pow(xx/height,2.0))/1.0;        
+                dur = dd;
+            } else if(type == 2) {
+                float dd = duration*(2.0-cos(yy/height*4.0)-cos(xx/height*4.0))/8.0;        
+                dur = dd;
+            } else {
+                dur = y;
+            }
+            lense[y*line_size+x*COLORS] = dur;
+        }
+    }
+
+    int32_t d = 0;
     while(fread(&buffer[d*frame_size], 1, frame_size, fi)) {        
         for(int32_t y=0; y<height; y++) {
-            int64_t dur = (d-y/8) % duration;
-            if(dur<0) dur+= duration;
-            // fprintf(stderr, "%d\n", dur);
+            char type = 2; 
             for(int32_t x=0; x<width; x++) {
+
+                dur = (d-lense[line_size*y+x*COLORS])%duration;
+                if(dur<0) dur+= duration;
+                
                 int64_t trg = x*COLORS + y*line_size;
                 int64_t src = x*COLORS + y*line_size + dur * frame_size;
                 src %= buffer_size;
@@ -95,9 +119,9 @@ void run() {
         d%=duration;
         fwrite(out, 1, frame_size, fo);
    }
-
+   free(lense );
    free(buffer);
-   free(out);
+   free(out   );
 }
 
 void cleanup() {
