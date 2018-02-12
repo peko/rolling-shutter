@@ -13,7 +13,7 @@
 
 int32_t  width    =  0;
 int32_t  height   =  0;
-uint32_t duration =  0;; 
+int64_t duration =  0;; 
 
 FILE* fi;
 FILE* fo;
@@ -74,18 +74,21 @@ void run() {
     uint8_t* buffer = calloc(buffer_size, 1);
     uint8_t* out    = calloc(frame_size , 1);
 
-    int32_t d = 0;
+    int64_t d = 0;
     while(fread(&buffer[d*frame_size], 1, frame_size, fi)) {        
         for(int32_t y=0; y<height; y++) {
+            int64_t dur = (d-y/8) % duration;
+            if(dur<0) dur+= duration;
+            // fprintf(stderr, "%d\n", dur);
             for(int32_t x=0; x<width; x++) {
-                int32_t trg = x*COLORS + y*line_size;
-                int32_t dur = (d - y/4) % duration;   
-                int32_t src = x*COLORS + y*line_size + dur * frame_size;
+                int64_t trg = x*COLORS + y*line_size;
+                int64_t src = x*COLORS + y*line_size + dur * frame_size;
                 src %= buffer_size;
                 trg %= frame_size;
                 out[trg+0] = buffer[src+0];
                 out[trg+1] = buffer[src+1];
                 out[trg+2] = buffer[src+2];
+                // if (d==y) out[trg+0] = 255;
             }
         }
         d++;

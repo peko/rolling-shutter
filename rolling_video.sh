@@ -4,11 +4,11 @@ video=${1:-videos/video_001.mp4}
 
 eval $(ffprobe -v error -of flat=s=_ -select_streams v:0 -show_entries stream=height,width $video)
 
-#W=${streams_stream_0_width}
-#H=${streams_stream_0_height}
+# W=${streams_stream_0_width}
+# H=${streams_stream_0_height}
 
-W=800
-H=600
+W=1024
+H=576
 
 echo $video $W $H >&2
 
