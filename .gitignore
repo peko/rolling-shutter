@@ -1,1 +1,13 @@
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+results/
+results_sin/
+results_strip/
+rolling
 sliding
+strip
+strip_move/
+videos/
+
