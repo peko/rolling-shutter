@@ -74,52 +74,49 @@ void run() {
 
     uint8_t* buffer = calloc(buffer_size, 1);
     uint8_t* out    = calloc(frame_size , 1);
-    int32_t* lense  = calloc(frame_size , sizeof(int32_t));
     
-    int64_t dur = 0;
-
-    for(int32_t y=0; y<height; y++) {
-        char type = 1; 
-        for(int32_t x=0; x<width; x++) {
-            float yy = y-height/2.0;
-            float xx = x-width /2.0;
-            if(type == 1) {
-                float dd = duration*(pow(yy/height,2.0)+pow(xx/height,2.0))/8.0;        
-                dur = dd;
-            } else if(type == 2) {
-                float dd = duration*(2.0-cos(yy/height*4.0)-cos(xx/height*4.0))/8.0;        
-                dur = dd;
-            } else {
-                dur = y;
-            }
-            lense[y*line_size+x*COLORS] = dur;
-        }
-    }
-
     int32_t d = 0;
     while(fread(&buffer[d*frame_size], 1, frame_size, fi)) {        
         for(int32_t y=0; y<height; y++) {
             char type = 2; 
             for(int32_t x=0; x<width; x++) {
-
-                dur = (d-lense[line_size*y+x*COLORS])%duration;
-                if(dur<0) dur+= duration;
                 
                 int64_t trg = x*COLORS + y*line_size;
-                int64_t src = x*COLORS + y*line_size + dur * frame_size;
-                src %= buffer_size;
+                uint8_t r = buffer[d*frame_size+trg+0];
+                uint8_t g = buffer[d*frame_size+trg+1];
+                uint8_t b = buffer[d*frame_size+trg+2];
+
+                int32_t dr= d-(255-r)/48.0;
+                int32_t dg= d-(255-g)/64.0;
+                int32_t db= d-(255-b)/96.0;
+
+                if(dr<0) dr+=duration;
+                if(dg<0) dg+=duration;
+                if(db<0) db+=duration;
+
+                int64_t sr = x*COLORS + y*line_size + dr*frame_size;
+                int64_t sg = x*COLORS + y*line_size + dg*frame_size;
+                int64_t sb = x*COLORS + y*line_size + db*frame_size;
+                
+                sr %= buffer_size;
+                sg %= buffer_size;
+                sb %= buffer_size;
+                
                 trg %= frame_size;
-                out[trg+0] = buffer[src+0];
-                out[trg+1] = buffer[src+1];
-                out[trg+2] = buffer[src+2];
-                // if (d==y) out[trg+0] = 255;
+
+                out[trg+0] = buffer[sr+0];
+                out[trg+1] = buffer[sg+1];
+                out[trg+2] = buffer[sb+2];
+
+                // out[trg+0] = buffer[d*frame_size+trg+0]*buffer[sr+0]/255;
+                // out[trg+1] = buffer[d*frame_size+trg+1]*buffer[sg+1]/255;
+                // out[trg+2] = buffer[d*frame_size+trg+2]*buffer[sb+2]/255;
             }
         }
         d++;
         d%=duration;
         fwrite(out, 1, frame_size, fo);
    }
-   free(lense );
    free(buffer);
    free(out   );
 }

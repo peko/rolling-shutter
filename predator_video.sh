@@ -7,8 +7,8 @@ eval $(ffprobe -v error -of flat=s=_ -select_streams v:0 -show_entries stream=he
 # W=${streams_stream_0_width}
 # H=${streams_stream_0_height}
 
-W=1280
-H=720
+W=1024
+H=576
 
 echo $video $W $H >&2
 
@@ -21,7 +21,7 @@ ffmpeg                   \
     -pix_fmt rgb24       \
     -f rawvideo          \
     - |                  \
-./rolling $W $H |        \
+./predator $W $H |       \
 ffplay                   \
    -loglevel 0           \
    -hide_banner          \

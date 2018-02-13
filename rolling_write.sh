@@ -7,8 +7,8 @@ eval $(ffprobe -v error -of flat=s=_ -select_streams v:0 -show_entries stream=he
 #W=${streams_stream_0_width}
 #H=${streams_stream_0_height}
 
-W=1024
-H=576
+W=1280
+H=720
 
 echo $video $W $H >&2
 
@@ -20,9 +20,9 @@ ffmpeg                   \
     -vf scale=$W:$H      \
     -pix_fmt rgb24       \
     -f rawvideo          \
-    -t 150               \
     - |                  \
 ./rolling $W $H |        \
+./predator $W $H |       \
 ffmpeg                   \
    -hide_banner          \
    -f rawvideo           \
