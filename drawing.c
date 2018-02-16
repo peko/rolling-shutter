@@ -35,13 +35,14 @@ void draw() {
     static int dx=1;
     static int y=0;
     static int dy=1;
-    
+
+    cairo_set_source_rgba (cr, 0.1, 0.1, 0.1, 0.1);
+    cairo_paint(cr);
+
     cairo_select_font_face(
         cr, "serif",
         CAIRO_FONT_SLANT_NORMAL,
         CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_source_rgb (cr, 0.1, 0.1, 0.1);
-    cairo_paint(cr);
     
     cairo_set_font_size(cr, 18.0);
     cairo_set_source_rgb(cr, 0.5, 0.5, 0.5);
