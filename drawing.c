@@ -39,7 +39,7 @@ void draw() {
     static float r,g,b;
 
     if(n%30==0) { 
-        cairo_set_source_rgba (cr, 0.1, 0.1, 0.1, 0.1);
+        cairo_set_source_rgba (cr, 0.1, 0.1, 0.1, 0.5);
         cairo_paint(cr);
     };
     
