@@ -36,22 +36,28 @@ void draw() {
     static int y=0;
     static int dy=1;
 
-    cairo_set_source_rgba (cr, 0.1, 0.1, 0.1, 0.1);
-    cairo_paint(cr);
+    static float r,g,b;
 
+    if(n%30==0) { 
+        cairo_set_source_rgba (cr, 0.1, 0.1, 0.1, 0.1);
+        cairo_paint(cr);
+    };
+    
     cairo_select_font_face(
         cr, "serif",
         CAIRO_FONT_SLANT_NORMAL,
         CAIRO_FONT_WEIGHT_BOLD);
     
-    cairo_set_font_size(cr, 18.0);
-    cairo_set_source_rgb(cr, 0.5, 0.5, 0.5);
+    cairo_set_font_size(cr, 64.0);
+    cairo_set_source_rgb(cr, r, g, b);
     cairo_move_to(cr, x, y);
     char buf[128];
     sprintf(buf, "%d", n++);
     cairo_show_text(cr, buf);
 
     for(int i=0; i<5; i++) {   
+        r+=0.01; g+=0.03; b+=0.05;
+        if(r>1.0) r=0.0; if(g>1.0) g=0.0; if(b>1.0) b=0.0;
         cairo_move_to(cr, rand()%W, rand()%H);
         cairo_line_to(cr, rand()%W, rand()%H);
         cairo_stroke(cr);
