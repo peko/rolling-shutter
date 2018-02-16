@@ -11,3 +11,6 @@ target_link_libraries(rolling m)
 
 add_executable(predator predator.c)
 target_link_libraries(predator m)
+
+add_executable(drawing drawing.c)
+target_link_libraries(drawing cairo pthread)
